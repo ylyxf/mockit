@@ -1,0 +1,12 @@
+spring:
+  datasource:
+    url: jdbc:postgresql://127.0.0.1:5432/new_database
+    username: postgres
+    password: postgres
+    driver-class-name: org.postgresql.Driver
+server:
+  port: 3000
+  context-path: /mockit
+mybatis:
+  configuration:
+    mapUnderscoreToCamelCase: true
