@@ -6,7 +6,11 @@ spring:
     driver-class-name: org.postgresql.Driver
 server:
   port: 3000
-  context-path: /mockit
+  context-path: /
 mybatis:
   configuration:
     mapUnderscoreToCamelCase: true
+
+mockit:
+  mockdir: mock
+  src-context-path: /web

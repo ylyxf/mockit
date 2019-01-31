@@ -1,4 +1,4 @@
-package org.siqisource.mockit;
+package org.siqisource.mockit.tomcat;
 
 import org.springframework.boot.web.embedded.tomcat.TomcatServletWebServerFactory;
 import org.springframework.boot.web.servlet.server.ConfigurableServletWebServerFactory;
