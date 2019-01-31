@@ -3,6 +3,7 @@ package org.siqisource.mockit.tomcat;
 import java.io.File;
 
 import org.apache.catalina.Context;
+import org.apache.catalina.loader.WebappLoader;
 import org.apache.catalina.startup.Tomcat;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.system.ApplicationHome;
@@ -30,9 +31,8 @@ public class MockitTomcatServletWebServerFactory extends TomcatServletWebServerF
 			mockPathFile.mkdirs();
 		}
 		Context context = tomcat.addWebapp(srcContextPath, mockPath);
-		// WebappLoader loader = new
-		// WebappLoader(Thread.currentThread().getContextClassLoader());
-		// context.setLoader(loader);
+		WebappLoader loader = new WebappLoader(Thread.currentThread().getContextClassLoader());
+		context.setLoader(loader);
 
 		return new TomcatWebServer(tomcat, getPort() >= 0);
 	}
