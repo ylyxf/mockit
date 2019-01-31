@@ -28,6 +28,8 @@ import org.apache.commons.io.monitor.FileAlterationListenerAdaptor;
 import org.apache.commons.io.monitor.FileAlterationMonitor;
 import org.apache.commons.io.monitor.FileAlterationObserver;
 import org.mitre.dsmiley.httpproxy.ProxyServlet;
+import org.siqisource.mockit.controller.JavaScriptController;
+import org.siqisource.mockit.controller.JsonController;
 import org.siqisource.mockit.controller.SqlController;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -55,8 +57,16 @@ public class MockitFilter extends FileAlterationListenerAdaptor implements Filte
 
 	private final String configFileName = "mockit.properties";
 
+	private String baseDir = null;
+
 	@Autowired
 	private SqlController sqlController;
+
+	@Autowired
+	private JsonController jsonController;
+
+	@Autowired
+	private JavaScriptController javascriptController;
 
 	@Override
 	public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain chain)
@@ -69,15 +79,17 @@ public class MockitFilter extends FileAlterationListenerAdaptor implements Filte
 			System.out.println("url map:" + url + "-->" + dist);
 			request.setAttribute("originURI", url);
 			request.setAttribute("distURI", dist);
-
+			request.setAttribute("baseDir", baseDir);
 			if (dist.endsWith(".jsp")) {
 				request.getRequestDispatcher(dist).forward(request, response);
 			} else if (dist.endsWith(".sql")) {
 				sqlController.service(request, response);
+			} else if (dist.endsWith(".json")) {
+				jsonController.service(request, response);
 			} else if (dist.endsWith(".js")) {
-
+				javascriptController.service(request, response);
 			} else if (dist.endsWith(".xls") || dist.endsWith(".xlsx")) {
-
+				chain.doFilter(servletRequest, servletResponse);
 			} else {
 				chain.doFilter(servletRequest, servletResponse);
 			}
@@ -92,7 +104,8 @@ public class MockitFilter extends FileAlterationListenerAdaptor implements Filte
 		ApplicationHome home = new ApplicationHome(getClass());
 		File jarFile = home.getSource();
 		File parentFolder = jarFile.getParentFile();
-		String mockConfig = parentFolder + "/" + mockdir + "/" + configFileName;
+		this.baseDir = parentFolder + "/" + mockdir;
+		String mockConfig = this.baseDir + "/" + configFileName;
 		File mockConfigFile = new File(mockConfig);
 		if (!mockConfigFile.exists()) {
 			logger.error("Can't find file:" + mockConfig + ",I will create it");
